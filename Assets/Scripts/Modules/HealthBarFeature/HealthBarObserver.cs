@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.Events;
 using Modules.EventBusFeature;
+using UnityEngine;
 
 namespace Modules.HealthBarFeature
 {
@@ -11,7 +12,7 @@ namespace Modules.HealthBarFeature
         public HealthBarObserver(HealthBarView view)
         {
             _view = view;
-            
+
             EventBus.Subscribe<PlayerHealthChanged>(UpdateHealth);
         }
         

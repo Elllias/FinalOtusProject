@@ -2,9 +2,9 @@
 {
     public struct PlayerHealthChanged
     {
-        public readonly int Health;
+        public readonly float Health;
 
-        public PlayerHealthChanged(int health)
+        public PlayerHealthChanged(float health)
         {
             Health = health;
         }

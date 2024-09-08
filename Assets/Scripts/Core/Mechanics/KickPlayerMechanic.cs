@@ -1,5 +1,8 @@
-﻿using Core.Components;
-using Core.Enemies;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Core.Components;
+using Core.Entities;
 using Core.Events;
 using Modules.EventBusFeature;
 using UnityEngine;
@@ -9,37 +12,46 @@ namespace Core.Mechanics
     public class KickPlayerMechanic
     {
         private readonly Transform _selfTransform;
-        private readonly float _range;
+        private readonly float _cooldown;
+        
+        private CancellationTokenSource _source;
 
-        public KickPlayerMechanic(Transform selfTransform, float range)
+        public KickPlayerMechanic(Transform selfTransform, float cooldown)
         {
             _selfTransform = selfTransform;
-            _range = range;
+            _cooldown = cooldown;
+        }
+
+        public async void StartAsync()
+        {
+            _source = new CancellationTokenSource();
             
-            EventBus.Subscribe<ChasingCompleteEvent>(OnShootEvent);
-        }
-
-        ~KickPlayerMechanic()
-        {
-            EventBus.Unsubscribe<ChasingCompleteEvent>(OnShootEvent);
-        }
-
-        private async void OnShootEvent(ChasingCompleteEvent _)
-        {
-            while ()
-            if (Physics.Raycast(_selfTransform.position, _selfTransform.forward, out var hit, _range))
+            while (!_source.IsCancellationRequested)
             {
-                Debug.Log(hit.transform.name);
-
-                if (hit.transform.TryGetComponent<Player>(out var player))
+                if (Physics.Raycast(_selfTransform.position, _selfTransform.forward, out var hit))
                 {
-                    player.ChangeHealth(-1);
+                    if (hit.transform.TryGetComponent<Player>(out var player))
+                    {
+                        player.ChangeHealth(-1);
+                    }
                 }
-
-                // эффект попадания просто в обычный объект
-                /*GameObject impactGO = Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
-                Destroy(impactGO, 2f);*/
+                
+                try
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(_cooldown), _source.Token);
+                }
+                catch
+                {
+                    return;
+                }
             }
+            
+            _source?.Dispose();
+        }
+
+        public void Stop()
+        {
+            _source?.Cancel();
         }
     }
 }

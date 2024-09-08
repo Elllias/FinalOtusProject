@@ -5,11 +5,11 @@ namespace Modules.HealthBarFeature
 {
     public class HealthBarView : MonoBehaviour
     {
-        [SerializeField] private Slider _fillRect;
+        [SerializeField] private Slider _slider;
         
         public void SetSliderValue(float value)
         {
-            _fillRect.SetSliderValue(value);
+            _slider.SetSliderValue(value);
         }
     }
 }

@@ -7,6 +7,7 @@ namespace Core.Components
     public class MoveComponent
     {
         [SerializeField] private Rigidbody _body;
+        [SerializeField] private Transform _orientation;
 
         public void MoveTo(Vector3 direction)
         {
@@ -15,12 +16,12 @@ namespace Core.Components
 
         public Vector3 GetForwardDirection()
         {
-            return _body.transform.forward;
+            return _orientation.forward;
         }
 
         public Vector3 GetRightDirection()
         {
-            return _body.transform.right;
+            return _orientation.right;
         }
     }
 }

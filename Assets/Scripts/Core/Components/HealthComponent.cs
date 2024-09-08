@@ -8,22 +8,34 @@ namespace Core.Components
     {
         public event Action Death;
         
-        [SerializeField] private int _health;
+        [SerializeField] private int _currentHealth;
+        [SerializeField] private int _maxHealth;
 
         public void ChangeHealth(int delta)
         {
-            _health += delta;
-
-            if (_health <= 0)
+            _currentHealth += delta;
+            
+            if (_currentHealth <= 0)
             {
+                _currentHealth = 0;
+                
                 Debug.LogWarning("Somebody is dead!");
                 Death?.Invoke();
             }
+            else if (_currentHealth >= _maxHealth)
+            {
+                _currentHealth = _maxHealth;
+            }
         }
 
-        public int GetHealth()
+        public void ChangeMaxHealth(int delta)
         {
-            return _health;
+            _maxHealth += delta;
+        }
+
+        public float GetNormalizedHealth()
+        {
+            return Mathf.Clamp01(_currentHealth / (float)_maxHealth);
         }
     }
 }

@@ -1,5 +1,6 @@
-﻿using Core.Components;
-using Core.Enemies;
+﻿using System;
+using Core.Components;
+using Core.Entities;
 using Core.Events;
 using Modules.EventBusFeature;
 using UnityEngine;
@@ -10,21 +11,33 @@ namespace Core.Mechanics
     {
         private readonly Transform _shootingPoint;
         private readonly float _range;
+        private readonly float _shootCooldown;
+
+        private DateTime _lastShootTime;
 
         public ShootMechanic(ShootingComponent shootingComponent)
         {
             _shootingPoint = shootingComponent.GetPoint();
             _range = shootingComponent.GetRange();
-            
-            EventBus.Subscribe<ShootEvent>(OnShootEvent);
+            _shootCooldown = shootingComponent.GetShootCooldown();
         }
 
-        ~ShootMechanic()
+        public void Update()
         {
-            EventBus.Unsubscribe<ShootEvent>(OnShootEvent);
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                if ((DateTime.Now - _lastShootTime).TotalSeconds < _shootCooldown)
+                {
+                    return;
+                }
+            
+                _lastShootTime = DateTime.Now;
+                
+                Shoot();
+            }
         }
 
-        private void OnShootEvent(ShootEvent _)
+        private void Shoot()
         {
             if (Physics.Raycast(_shootingPoint.position, _shootingPoint.forward, out var hit, _range))
             {
@@ -34,11 +47,13 @@ namespace Core.Mechanics
                 {
                     enemy.ChangeHealth(-1);
                 }
-
+                
                 // эффект попадания просто в обычный объект
                 /*GameObject impactGO = Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
                 Destroy(impactGO, 2f);*/
             }
+            
+            EventBus.RaiseEvent(new ShootEvent());
         }
     }
 }
