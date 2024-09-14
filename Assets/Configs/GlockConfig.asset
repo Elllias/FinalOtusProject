@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae3ff8025d064fcbbc69fd10ca99787a, type: 3}
+  m_Name: GlockConfig
+  m_EditorClassIdentifier: Assembly-CSharp:Core.Components:WeaponConfig
+  Range: 30
+  IsUnlimited: 1
+  MaxAmmoCount: 5
+  ShootCooldown: 0.35
+  ShootDuration: 0.35
+  RecoilForce: 2
+  ReloadingTime: 1
+  ShootEffectPoint: {x: 0.2627283, y: -0.1326499, z: 0.6524576}
+  ShootSound: {fileID: 8300000, guid: 527cd1bdd247778479e5d73cdd421a8e, type: 3}
+  DrySound: {fileID: 8300000, guid: c7c8e425585e72745b3b2c6623c61850, type: 3}
+  ReloadSound: {fileID: 8300000, guid: 40bbb9a97e168ea4db6b4ce476f865b3, type: 3}
+  IsAutomatic: 0

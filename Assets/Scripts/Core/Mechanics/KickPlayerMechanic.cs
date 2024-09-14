@@ -47,6 +47,7 @@ namespace Core.Mechanics
             }
             
             _source?.Dispose();
+            _source = null;
         }
 
         public void Stop()

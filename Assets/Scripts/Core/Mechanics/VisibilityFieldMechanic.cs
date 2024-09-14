@@ -56,6 +56,7 @@ namespace Core.Mechanics
             }
             
             _source.Dispose();
+            _source = null;
         }
 
         public bool IsTargetVisible()
@@ -87,7 +88,7 @@ namespace Core.Mechanics
         
         public void Stop()
         {
-            _source.Cancel();
+            _source?.Cancel();
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Core.Mechanics
 {
     public class RotateThroughInputMechanic
     {
-        private const float MAX_VERTICAL_OFFSET = 40f;
+        private const float MAX_VERTICAL_OFFSET = 85f;
         
         private readonly RotateComponent _rotateComponent;
         private readonly float _mouseSensitivity;

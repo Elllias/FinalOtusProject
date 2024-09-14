@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using Core.Configs;
+using Core.Data;
 using UnityEngine;
 
 namespace Core.Components
@@ -7,40 +10,34 @@ namespace Core.Components
     public class ShootingComponent
     {
         [SerializeField] private Transform _shootingPoint;
-        [SerializeField] private float _recoilForce;
-        [SerializeField] private float _shootDuration;
-        [SerializeField] private float _shootCooldown;
+        [SerializeField] private HitEffectConfig _hitEffectConfig;
         [SerializeField] private ParticleSystem _visualEffect;
-        [SerializeField] private float _range;
-
+        [SerializeField] private Transform _effectsPool;
+        [SerializeField] private AudioSource _audioSource;
+        
         public Transform GetPoint()
         {
             return _shootingPoint;
-        }
-        
-        public float GetRange()
-        {
-            return _range;
-        }
-        
-        public float GetRecoilForce()
-        {
-            return _recoilForce;
-        }
-
-        public float GetShootDuration()
-        {
-            return _shootDuration;
         }
         
         public ParticleSystem GetVisualEffect()
         {
             return _visualEffect;
         }
-
-        public float GetShootCooldown()
+        
+        public HitEffectConfig GetHitSettings()
         {
-            return _shootCooldown;
+            return _hitEffectConfig;
+        }
+        
+        public Transform GetEffectsPool()
+        {
+            return _effectsPool;
+        }
+
+        public AudioSource GetAudioSource()
+        {
+            return _audioSource;
         }
     }
 }

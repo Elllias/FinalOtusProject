@@ -33,6 +33,11 @@ namespace Core.Components
             _maxHealth += delta;
         }
 
+        public void ResetHealth()
+        {
+            _currentHealth = _maxHealth;
+        }
+
         public float GetNormalizedHealth()
         {
             return Mathf.Clamp01(_currentHealth / (float)_maxHealth);

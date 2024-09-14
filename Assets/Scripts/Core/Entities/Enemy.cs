@@ -1,6 +1,9 @@
-﻿using Core.Components;
+﻿using System;
+using Core.Components;
 using Core.Data;
+using Core.Events;
 using Core.Mechanics;
+using Modules.EventBusFeature;
 using UnityEngine;
 
 namespace Core.Entities
@@ -11,20 +14,23 @@ namespace Core.Entities
         [SerializeField] private ChaseComponent _chaseComponent;
         [SerializeField] private AnimationComponent _animationComponent;
         [SerializeField] private VisibilityFieldComponent _visibilityFieldComponent;
+        [SerializeField] private StepAudioComponent _stepAudioComponent;
 
         private ChaseMechanic _chaseMechanic;
         private KickPlayerMechanic _kickPlayerMechanic;
         private EnemyAnimation _enemyAnimation;
         private VisibilityFieldMechanic _visibilityFieldMechanic;
+        private EnemyStepSoundMechanic _enemyStepSoundMechanic;
 
         private void Awake()
         {
             var selfTransform = transform;
             
             _chaseMechanic = new ChaseMechanic(_chaseComponent);
-            _kickPlayerMechanic = new KickPlayerMechanic(selfTransform, 0.5f);
+            _kickPlayerMechanic = new KickPlayerMechanic(selfTransform, 1.4f);
             _visibilityFieldMechanic = new VisibilityFieldMechanic(_visibilityFieldComponent);
             _enemyAnimation = new EnemyAnimation(_animationComponent);
+            _enemyStepSoundMechanic = new EnemyStepSoundMechanic(_chaseMechanic, _stepAudioComponent);
         }
         
         private void OnEnable()
@@ -61,10 +67,21 @@ namespace Core.Entities
             _healthComponent.ChangeHealth(delta);
         }
 
+        public void MoveTo(Vector3 position)
+        {
+            _chaseMechanic.MoveToAsync(position, OnPlayerLost);
+        }
+        
+        public void Initialize()
+        {
+            _enemyAnimation.ChangeState(EAnimationState.Chase);
+            _healthComponent.ResetHealth();
+        }
+
         private void OnDeath()
         {
-            OnDisable();
-            Destroy(gameObject);
+            EventBus.RaiseEvent(new ReplenishmentAmmoEvent {Ammo = 10});
+            EventBus.RaiseEvent(new EnemyDeathEvent {Source = this});
         }
         
         private void OnChasingCompleted()
@@ -87,6 +104,7 @@ namespace Core.Entities
 
         private void OnPlayerFounded()
         {
+            _chaseMechanic.Stop();
             _chaseMechanic.StartAsync();
             _enemyAnimation.ChangeState(EAnimationState.Chase);
         }

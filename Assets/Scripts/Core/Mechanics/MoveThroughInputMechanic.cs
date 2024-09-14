@@ -1,4 +1,6 @@
 using Core.Components;
+using Core.Events;
+using Modules.EventBusFeature;
 using UnityEngine;
 
 namespace Core.Mechanics
@@ -14,7 +16,7 @@ namespace Core.Mechanics
             _moveSpeed = moveSpeed;
         }
 
-        public void Update()
+        public void FixedUpdate()
         {
             var horizontalInput = Input.GetAxisRaw("Horizontal");
             var verticalInput = Input.GetAxisRaw("Vertical");
@@ -25,7 +27,11 @@ namespace Core.Mechanics
 
             direction.y = 0;
 
-            _moveComponent.MoveTo(direction * _moveSpeed);
+            if (direction == Vector3.zero) return;
+
+            _moveComponent.MoveTo(direction.normalized * _moveSpeed);
+            
+            EventBus.RaiseEvent(new PlayerStepEvent());
         }
     }
 }
