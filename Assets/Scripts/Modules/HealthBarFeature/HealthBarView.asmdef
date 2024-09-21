@@ -1,0 +1,16 @@
+{
+    "name": "HealthBarView",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4fb57c6c777d338429c7f291c9f55c5d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -13,16 +13,27 @@ namespace Core.Mechanics
     {
         private readonly Transform _selfTransform;
         private readonly float _cooldown;
-        
+        private readonly int _sourceId;
+
         private CancellationTokenSource _source;
 
-        public KickPlayerMechanic(Transform selfTransform, float cooldown)
+        public KickPlayerMechanic(KickPlayerComponent component, int sourceId)
         {
-            _selfTransform = selfTransform;
-            _cooldown = cooldown;
+            _selfTransform = component.GetTransform();
+            _cooldown = component.GetCooldown();
+            _sourceId = sourceId;
+            
+            EventBus.Subscribe<ChasingResumedEvent>(OnChasingResumed);
+            EventBus.Subscribe<ChasingCompletedEvent>(OnChasingCompleted);
         }
 
-        public async void StartAsync()
+        ~KickPlayerMechanic()
+        {
+            EventBus.Unsubscribe<ChasingResumedEvent>(OnChasingResumed);
+            EventBus.Unsubscribe<ChasingCompletedEvent>(OnChasingCompleted);
+        }
+
+        private async void StartAsync()
         {
             _source = new CancellationTokenSource();
             
@@ -53,6 +64,22 @@ namespace Core.Mechanics
         public void Stop()
         {
             _source?.Cancel();
+        }
+        
+        private void OnChasingCompleted(ChasingCompletedEvent evt)
+        {
+            if (_sourceId != evt.SourceId)
+                return;
+            
+            StartAsync();
+        }
+
+        private void OnChasingResumed(ChasingResumedEvent evt)
+        {
+            if (_sourceId != evt.SourceId)
+                return;
+            
+            Stop();
         }
     }
 }

@@ -1,9 +1,8 @@
-﻿using Core.Components;
-using Core.Events;
-using Core.Mechanics;
+﻿using Core.Events;
+using Modules.AmmoPanelFeature;
 using Modules.EventBusFeature;
 
-namespace Modules.AmmoPanelFeature
+namespace Core.UI
 {
     public class AmmoViewObserver
     {

@@ -11,12 +11,12 @@ namespace Core.Mechanics
 {
     public class ReloadingMechanic
     {
-        private readonly AmmoRepository _repository;
+        private readonly AmmoRepositoryProvider _repository;
 
         private float _reloadingTime;
         private CancellationTokenSource _source;
 
-        public ReloadingMechanic(AmmoRepository repository)
+        public ReloadingMechanic(AmmoRepositoryProvider repository)
         {
             _repository = repository;
             

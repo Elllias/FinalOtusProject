@@ -68,6 +68,10 @@ namespace Modules.EventBusFeature
             public void Unsubscribe(Delegate handler)
             {
                 int index = _handlers.IndexOf(handler);
+
+                if (index == -1)
+                    return;
+                
                 _handlers.RemoveAt(index);
 
                 if (index <= _currentIndex)

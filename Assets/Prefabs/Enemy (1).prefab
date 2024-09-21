@@ -280,6 +280,9 @@ MonoBehaviour:
   _stepAudioComponent:
     Source: {fileID: 2156182842578075478}
     SoundCooldown: 0.35
+  _kickPlayerComponent:
+    _transform: {fileID: 6273397609430361320}
+    _cooldown: 1.4
 --- !u!54 &5167066662428790056
 Rigidbody:
   m_ObjectHideFlags: 0

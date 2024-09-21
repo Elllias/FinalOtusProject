@@ -1,9 +1,8 @@
-﻿using Core;
-using Core.Events;
+﻿using Core.Events;
 using Modules.EventBusFeature;
-using UnityEngine;
+using Modules.HealthBarFeature;
 
-namespace Modules.HealthBarFeature
+namespace Core.UI
 {
     public class HealthBarObserver
     {

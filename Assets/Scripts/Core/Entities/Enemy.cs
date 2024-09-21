@@ -1,5 +1,4 @@
-﻿using System;
-using Core.Components;
+﻿using Core.Components;
 using Core.Data;
 using Core.Events;
 using Core.Mechanics;
@@ -15,22 +14,24 @@ namespace Core.Entities
         [SerializeField] private AnimationComponent _animationComponent;
         [SerializeField] private VisibilityFieldComponent _visibilityFieldComponent;
         [SerializeField] private StepAudioComponent _stepAudioComponent;
+        [SerializeField] private KickPlayerComponent _kickPlayerComponent; 
 
         private ChaseMechanic _chaseMechanic;
         private KickPlayerMechanic _kickPlayerMechanic;
-        private EnemyAnimation _enemyAnimation;
+        private EnemyAnimationMechanic _enemyAnimationMechanic;
         private VisibilityFieldMechanic _visibilityFieldMechanic;
         private EnemyStepSoundMechanic _enemyStepSoundMechanic;
+        private int _sourceId;
 
         private void Awake()
         {
-            var selfTransform = transform;
-            
-            _chaseMechanic = new ChaseMechanic(_chaseComponent);
-            _kickPlayerMechanic = new KickPlayerMechanic(selfTransform, 1.4f);
-            _visibilityFieldMechanic = new VisibilityFieldMechanic(_visibilityFieldComponent);
-            _enemyAnimation = new EnemyAnimation(_animationComponent);
-            _enemyStepSoundMechanic = new EnemyStepSoundMechanic(_chaseMechanic, _stepAudioComponent);
+            _sourceId = GetHashCode();
+
+            _enemyAnimationMechanic = new EnemyAnimationMechanic(_animationComponent, _sourceId);
+            _chaseMechanic = new ChaseMechanic(_chaseComponent, _sourceId);
+            _kickPlayerMechanic = new KickPlayerMechanic(_kickPlayerComponent, _sourceId);
+            _visibilityFieldMechanic = new VisibilityFieldMechanic(_visibilityFieldComponent, _sourceId);
+            _enemyStepSoundMechanic = new EnemyStepSoundMechanic(_stepAudioComponent, _sourceId);
         }
         
         private void OnEnable()
@@ -38,28 +39,18 @@ namespace Core.Entities
             _visibilityFieldMechanic.StartAsync();
 
             if (_visibilityFieldMechanic.IsTargetVisible())
-                OnPlayerFounded();
+                EventBus.RaiseEvent(new PlayerFoundedEvent{SourceId = _sourceId});
             
             _healthComponent.Death += OnDeath;
-            _chaseMechanic.ChasingResumed += OnChasingResumed;
-            _chaseMechanic.ChasingCompleted += OnChasingCompleted;
-            _visibilityFieldMechanic.PlayerFounded += OnPlayerFounded;
-            _visibilityFieldMechanic.PlayerLost += OnPlayerLost;
         }
 
         private void OnDisable()
         {
-            _enemyAnimation.ChangeState(EAnimationState.Idle);
-            
             _visibilityFieldMechanic.Stop();
             _kickPlayerMechanic.Stop();
             _chaseMechanic.Stop();
             
             _healthComponent.Death -= OnDeath;
-            _chaseMechanic.ChasingResumed -= OnChasingResumed;
-            _chaseMechanic.ChasingCompleted -= OnChasingCompleted;
-            _visibilityFieldMechanic.PlayerFounded -= OnPlayerFounded;
-            _visibilityFieldMechanic.PlayerLost -= OnPlayerLost;
         }
 
         public void ChangeHealth(int delta)
@@ -69,12 +60,12 @@ namespace Core.Entities
 
         public void MoveTo(Vector3 position)
         {
-            _chaseMechanic.MoveToAsync(position, OnPlayerLost);
+            _chaseMechanic.MoveToAsync(position, 
+                () => EventBus.RaiseEvent(new PlayerLostEvent{SourceId = _sourceId}));
         }
         
         public void Initialize()
         {
-            _enemyAnimation.ChangeState(EAnimationState.Chase);
             _healthComponent.ResetHealth();
         }
 
@@ -82,31 +73,6 @@ namespace Core.Entities
         {
             EventBus.RaiseEvent(new ReplenishmentAmmoEvent {Ammo = 10});
             EventBus.RaiseEvent(new EnemyDeathEvent {Source = this});
-        }
-        
-        private void OnChasingCompleted()
-        {
-            _kickPlayerMechanic.StartAsync();
-            _enemyAnimation.ChangeState(EAnimationState.Hit);
-        }
-
-        private void OnChasingResumed()
-        {
-            _kickPlayerMechanic?.Stop();
-            _enemyAnimation.ChangeState(EAnimationState.Chase);
-        }
-        
-        private void OnPlayerLost()
-        {
-            _chaseMechanic.Stop();
-            _enemyAnimation.ChangeState(EAnimationState.Idle);
-        }
-
-        private void OnPlayerFounded()
-        {
-            _chaseMechanic.Stop();
-            _chaseMechanic.StartAsync();
-            _enemyAnimation.ChangeState(EAnimationState.Chase);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Core.Data;
+using Core.Other;
 using UnityEngine;
 
 namespace Core.Configs

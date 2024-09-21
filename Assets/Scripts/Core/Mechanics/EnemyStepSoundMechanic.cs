@@ -9,40 +9,62 @@ namespace Core.Mechanics
 {
     public class EnemyStepSoundMechanic
     {
-        private readonly ChaseMechanic _chaseMechanic;
+        private readonly int _sourceId;
         private readonly AudioSource _source;
         private readonly float _soundCooldown;
 
         private bool _isPlaying;
 
-        public EnemyStepSoundMechanic(ChaseMechanic chaseMechanic, StepAudioComponent stepAudioComponent)
+        public EnemyStepSoundMechanic(StepAudioComponent stepAudioComponent, int sourceId)
         {
-            _chaseMechanic = chaseMechanic;
+            _sourceId = sourceId;
             _source = stepAudioComponent.Source;
             _soundCooldown = stepAudioComponent.SoundCooldown;
 
-            _chaseMechanic.ChasingStarted += OnChasingStarted;
-            _chaseMechanic.ChasingResumed += OnChasingStarted;
-            _chaseMechanic.ChasingCompleted += OnChasingCompleted;
-            _chaseMechanic.ChasingStopped += OnChasingCompleted;
+            EventBus.Subscribe<ChasingStartedEvent>(OnChasingStarted);
+            EventBus.Subscribe<ChasingResumedEvent>(OnChasingResumed);
+            EventBus.Subscribe<ChasingCompletedEvent>(OnChasingCompleted);
+            EventBus.Subscribe<ChasingStoppedEvent>(OnChasingStopped);
         }
 
         ~EnemyStepSoundMechanic()
         {
-            _chaseMechanic.ChasingStarted -= OnChasingStarted;
-            _chaseMechanic.ChasingResumed -= OnChasingStarted;
-            _chaseMechanic.ChasingCompleted -= OnChasingCompleted;
-            _chaseMechanic.ChasingStopped -= OnChasingCompleted;
+            EventBus.Unsubscribe<ChasingStartedEvent>(OnChasingStarted);
+            EventBus.Unsubscribe<ChasingResumedEvent>(OnChasingResumed);
+            EventBus.Unsubscribe<ChasingCompletedEvent>(OnChasingCompleted);
+            EventBus.Unsubscribe<ChasingStoppedEvent>(OnChasingStopped);
         }
 
-        private void OnChasingCompleted()
+        private void OnChasingCompleted(ChasingCompletedEvent evt)
         {
+            if (evt.SourceId != _sourceId)
+                return;
+            
             _isPlaying = false;
         }
 
-        private void OnChasingStarted()
+        private void OnChasingStarted(ChasingStartedEvent evt)
         {
+            if (evt.SourceId != _sourceId)
+                return;
+            
             StartEventSending();
+        }
+
+        private void OnChasingResumed(ChasingResumedEvent evt)
+        {
+            if (evt.SourceId != _sourceId)
+                return;
+            
+            StartEventSending();
+        }
+
+        private void OnChasingStopped(ChasingStoppedEvent evt)
+        {
+            if (evt.SourceId != _sourceId)
+                return;
+            
+            _isPlaying = false;
         }
 
         private async void StartEventSending()

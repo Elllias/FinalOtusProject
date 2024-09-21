@@ -2,6 +2,7 @@
 using Core.Data;
 using Core.Entities;
 using Core.Other;
+using Core.UI;
 using Modules.AmmoPanelFeature;
 using Modules.HealthBarFeature;
 using UnityEngine;

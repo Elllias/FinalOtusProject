@@ -29,11 +29,11 @@ namespace Core.Entities
         private PlayerWalkAudioMechanic _walkAudioMechanic;
         private ReloadingMechanic _reloadingMechanic;
         private WeaponSwappingMechanic _weaponSwappingMechanic;
-        private AmmoRepository _ammoRepository;
+        private AmmoRepositoryProvider _ammoRepository;
 
         private void Awake()
         {
-            _ammoRepository = new AmmoRepository(_weaponsComponent);
+            _ammoRepository = new AmmoRepositoryProvider(_weaponsComponent);
             _shootingMechanic = new ShootingMechanic(_shootingComponent);
             _shootingVisualMechanic = new ShootingVisualMechanic(_shootingComponent);
             _shootingAudioMechanic = new ShootingAudioMechanic(_shootingComponent);

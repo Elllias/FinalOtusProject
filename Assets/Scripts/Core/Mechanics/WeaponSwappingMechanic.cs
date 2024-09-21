@@ -10,10 +10,10 @@ namespace Core.Mechanics
     public class WeaponSwappingMechanic
     {
         private readonly ShootingComponent _shootingComponent;
-        private readonly AmmoRepository _repository;
+        private readonly AmmoRepositoryProvider _repository;
         private readonly WeaponsComponent _weaponsComponent;
 
-        public WeaponSwappingMechanic(ShootingComponent shootingComponent, AmmoRepository repository, WeaponsComponent weaponsComponent)
+        public WeaponSwappingMechanic(ShootingComponent shootingComponent, AmmoRepositoryProvider repository, WeaponsComponent weaponsComponent)
         {
             _shootingComponent = shootingComponent;
             _repository = repository;

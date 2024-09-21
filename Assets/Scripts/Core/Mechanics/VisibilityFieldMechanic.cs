@@ -2,24 +2,25 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Core.Components;
+using Core.Events;
+using Modules.EventBusFeature;
 using UnityEngine;
 
 namespace Core.Mechanics
 {
     public class VisibilityFieldMechanic
     {
-        public event Action PlayerFounded;
-        public event Action PlayerLost;
-        
         private readonly VisibilityFieldComponent _component;
-        
+        private readonly int _sourceId;
+
         private CancellationTokenSource _source;
         private bool _wasVisible;
         private DateTime _lastSeenTime;
 
-        public VisibilityFieldMechanic(VisibilityFieldComponent component)
+        public VisibilityFieldMechanic(VisibilityFieldComponent component, int sourceId)
         {
             _component = component;
+            _sourceId = sourceId;
         }
 
         public async void StartAsync()
@@ -36,13 +37,13 @@ namespace Core.Mechanics
                     _wasVisible = true;
                     _lastSeenTime = DateTime.Now;
                     
-                    PlayerFounded?.Invoke();
+                    EventBus.RaiseEvent(new PlayerFoundedEvent{SourceId = _sourceId});
                 }
                 else if (_wasVisible && !isTargetVisible && !isInMemoryTime)
                 {
                     _wasVisible = false;
                     
-                    PlayerLost?.Invoke();
+                    EventBus.RaiseEvent(new PlayerLostEvent{SourceId = _sourceId});
                 }
 
                 try

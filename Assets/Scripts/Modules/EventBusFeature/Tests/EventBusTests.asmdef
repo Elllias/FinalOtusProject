@@ -1,0 +1,18 @@
+{
+    "name": "EventBusTests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:17469ef022b8339479b13c59177fb810"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
